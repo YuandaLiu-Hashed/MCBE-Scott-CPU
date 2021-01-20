@@ -2,83 +2,6 @@ int fontSize = 14; //14
 float fontHeight = 18.0; //18
 float fontWidth;
 
-color[] colorReferenceColor = {0, cyanLabel, navyLabel, magentaLabel, yellowLabel};
-
-StringDict colorReference = new StringDict();
-
-void refreshGenericColorReference() {
-
-  colorReference.clear();
-
-  for (int a = 0; a < LanguageEx.size(); a++) {
-    JSONObject tokenLanguageReference = LanguageEx.getJSONObject(a);
-    JSONArray LaunguageReplacements = tokenLanguageReference.getJSONArray("replacements");
-    for (int b = 0; b < LaunguageReplacements.size(); b++) {
-      String replacement = LaunguageReplacements.getJSONObject(b).getString("replacement");
-      colorReference.set(replacement, Integer.toString(a+1));
-    }
-  }
-}
-
-void drawTextWithColor(String text, float x, float y) {
-
-  if (text.startsWith("//")) {
-    fill(greenLabel);
-    text(text, x, y);
-    return;
-  } else if (text.startsWith("@")) {
-    fill(magentaLabel);
-    text(text, x, y);
-    return;
-  }
-
-  for (int n = 0; n < text.length(); n++) {
-    String stringAfterN = text.substring(n);
-
-    String validKey = "";
-    int validReference = 0;
-
-    for (int i = 0; i < colorReference.size(); i++) {
-      String targetKey = colorReference.key(i);
-      if (stringAfterN.startsWith(targetKey)) {
-        validKey = targetKey;
-        validReference = Integer.parseInt(colorReference.value(i));
-      }
-    }
-    if (!validKey.equals("")) {
-
-      fill(secondaryLabel);
-      text(validKey.charAt(0), x + fontWidth * n, y);
-
-      fill(colorReferenceColor[validReference]);
-      text(validKey.substring(1), x + fontWidth * (n + 1), y);
-
-      n += validKey.length() - 1;
-      continue;
-    } else if (stringAfterN.startsWith("N") && stringAfterN.length()>1) {
-      if (Character.isDigit(stringAfterN.charAt(1))) {
-        fill(secondaryLabel);
-        text("N", x + fontWidth * n, y);
-        n++;
-        fill(colorReferenceColor[4]);
-        for (int s = 1; s < stringAfterN.length(); s++) {
-          if (Character.isDigit(stringAfterN.charAt(s))) {
-            text(stringAfterN.charAt(s), x + fontWidth * n, y);
-            n++;
-          } else {
-            break;
-          }
-        }
-      }
-    }
-
-    //normal way
-    if (n >= text.length()) break;
-    fill(colorReferenceColor[0]);
-    text(text.charAt(n), x + fontWidth * n, y);
-  }
-}
-
 class CodeBox extends scrollableObject {
   PShape BoxShape = createShape();
   PShape CurserShape = createShape();
@@ -119,8 +42,6 @@ class CodeBox extends scrollableObject {
   ArrayList<String> Text = new ArrayList<String>();
 
   int lastEdited = -1;
-
-  suggester s = new suggester();
 
   boolean autoCompile = true;
 
@@ -189,8 +110,8 @@ class CodeBox extends scrollableObject {
 
     super.render();
 
-    s.onEdit = CO.Clicked;
-
+    compiler.onEdit = CO.Clicked;
+    
     shape(BoxShape, Position.x, Position.y);
     shape(LineIndicatorShape, Position.x+1, Position.y+1);
 
@@ -246,12 +167,12 @@ class CodeBox extends scrollableObject {
     }
 
     //error text
-    if (!compiler.ErrorText.equals("")) {
+    if (!compiler.errorText.equals("")) {
       fill(errorBackground);
       noStroke();
-      rect(Position.x, Position.y + fontHeight * (compiler.MachineCode.size() - 1) + 2, Size.x, fontHeight);
+      rect(Position.x, Position.y + fontHeight * (compiler.machineCode.size() - 1) + 2, Size.x, fontHeight);
       fill(255);
-      text(compiler.ErrorText, Position.x + Size.x - textWidth(compiler.ErrorText) - 10, Position.y + 17 + (compiler.MachineCode.size()-1) * fontHeight);
+      text(compiler.errorText, Position.x + Size.x - textWidth(compiler.errorText) - 10, Position.y + 17 + (compiler.machineCode.size()-1) * fontHeight);
     }
 
     //display text
@@ -265,12 +186,10 @@ class CodeBox extends scrollableObject {
       text(lineNumber, Position.x + 5, Position.y + 17 + i * fontHeight);
 
       //draw text
-      drawTextWithColor(line, Position.x + textOffset, Position.y + 17 + i * fontHeight);
+      fill(label);
+      text(line, Position.x + textOffset, Position.y + 17 + i * fontHeight);
     }
-
-    if (haveSelection) s.visible = false;
-    s.render(new CGPoint(textOffset, Position.y + 20 + curserY * fontHeight));
-
+    
     popMatrix();
 
     //curser type
@@ -281,7 +200,7 @@ class CodeBox extends scrollableObject {
     }
 
     //forward compiling request
-    if (millis() - lastEdited > compilerWaitTime && lastEdited != -1 && s.visible != true && autoCompile) {
+    if (millis() - lastEdited > compilerWaitTime && lastEdited != -1 && autoCompile) {
       compiler.runCompiler();
       machineCodeBox.updateDisplayContent();
       lastEdited = -1;
@@ -322,8 +241,6 @@ class CodeBox extends scrollableObject {
     int LastVisibleLine = int(scrollBar.scrollPosition + Size.y) / int(fontHeight) - 1;
     if (curserY < FirstVisibleLine) scroll((FirstVisibleLine - curserY) * int(fontHeight));
     if (curserY > LastVisibleLine) scroll((curserY - LastVisibleLine) * int(fontHeight));
-
-    s.updateSuggester(Text.get(curserY), curserPosition, fontWidth);
   }
 
   void EditingTextUpdate() {
@@ -357,9 +274,9 @@ class CodeBox extends scrollableObject {
   }
 
   void CUp() {
-    if (s.visible) {
+    if (false) { //if showed suggester result
       lastEdited = millis();
-      s.SUp();
+      //suggester down
     } else {
 
       if (haveSelection) {
@@ -382,9 +299,9 @@ class CodeBox extends scrollableObject {
   }
 
   void CDown() {
-    if (s.visible) {
+    if (false) { //if showed suggester result
       lastEdited = millis();
-      s.SDown();
+      //suggester down
     } else {
 
       if (haveSelection) {
@@ -469,11 +386,8 @@ class CodeBox extends scrollableObject {
   void CReturn() {
     if (haveSelection) removeSelection();
     
-    if (s.visible) {
-      s.STab();
-      Text.set(curserY, s.ObtainNewLine());
-      curserPosition = s.ObtainNewCurserPosition(Text.get(curserY));
-      EditingTextUpdate();
+    if (false) { //showed suggester
+      //trigger suggester
     } else {
       Text.add(curserY+1, Text.get(curserY).substring(curserPosition, Text.get(curserY).length()));
       Text.set(curserY, Text.get(curserY).substring(0, curserPosition));
@@ -488,14 +402,8 @@ class CodeBox extends scrollableObject {
 
   void CTab() {
     
-    if (s.visible) {
-      s.STab();
-      Text.set(curserY, s.ObtainNewLine());
-      curserPosition = s.ObtainNewCurserPosition(Text.get(curserY));
-      EditingTextUpdate();
-    } else {
-      curserPosition = s.ObtainNewCurserPosition(Text.get(curserY));
-      GenericUpdate();
+    if (false) { //showed suggester
+      //trigger suggester
     }
   }
 

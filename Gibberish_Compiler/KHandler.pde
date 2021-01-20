@@ -2,7 +2,7 @@ void keyPressed() {
   if (keyCode == 0 || keyCode == 17 || keyCode == 18 || keyCode == 157 || keyCode == 16 || keyCode == 768){
     //undefined characters
     if (keyCode == ALT) {
-      SuggesterVisibleToggle = true;
+      //SuggesterVisibleToggle = true;
     }
     if (keyCode == CONTROL || keyCode == 157 || keyCode == 768) { //command and control
       keyControl = 0;

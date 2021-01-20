@@ -59,7 +59,6 @@ void setup() {
   setupClipBoard();
 
   LoadLanguageReference();
-  refreshGenericColorReference();
 
   surface.setResizable(true);
   surface.setTitle(appName + " v" + appVersion);

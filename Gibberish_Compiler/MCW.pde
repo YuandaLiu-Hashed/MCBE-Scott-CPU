@@ -110,7 +110,7 @@ class MachineCodeBox extends screenObject {
   }
 
   void updateDisplayContent() {
-    MachineCodeReference = compiler.MachineCode;
+    MachineCodeReference = compiler.machineCode;
     MachineCode.clear();
     for (int i = 0; i < MachineCodeReference.size(); i++) {
       String MCodeLine = MachineCodeReference.get(i);

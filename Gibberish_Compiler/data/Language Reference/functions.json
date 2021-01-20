@@ -1,0 +1,31 @@
+[
+	{
+		"syntax": "%0 = %1",
+		"priority": 0,
+		"output": "",
+		"inputs": "VR-Int8,R-Int8",
+		"compiler": "VC",
+		"mcode": ""
+	},{
+		"syntax": "let #0 be #1",
+		"priority": 0,
+		"output": "",
+		"inputs": "",
+		"compiler": "VC,#0,#1",
+		"mcode": ""
+	},{
+		"syntax": "%0 += %1",
+		"priority": 0,
+		"output": "",
+		"inputs": "V-Int8,R-Int8",
+		"compiler": "",
+		"mcode": ""
+	},{
+		"syntax": "%0 + %1",
+		"priority": 5,
+		"output": "R-Int8",
+		"inputs": "R-Int8,R-Int8",
+		"compiler": "",
+		"mcode": ""
+	}
+]

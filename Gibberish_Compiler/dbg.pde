@@ -1,4 +1,4 @@
-boolean enablePrintout = false;
+boolean enablePrintout = true;
 
 void p(String message, boolean lineB) { //automatic printing
   if (enablePrintout) {
