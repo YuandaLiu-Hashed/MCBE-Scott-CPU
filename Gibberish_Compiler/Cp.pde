@@ -47,11 +47,16 @@ class Compiler {
     //phrase a single line
     ArrayList<String> phrasedLine = phraseLine(line, true);
     
-    println(phrasedLine);
+    println();
+    println("Started Compiling");
+    println("Master Structure: " + phrasedLine);
     
-    InstructionStructure instructionStructure = new InstructionStructure(phrasedLine, 0);
+    InstructionStructure instructionStructure = new InstructionStructure(phrasedLine, true);
     
     println();
+    
+    println("Function Structure: ");
+    instructionStructure.printStructure(0);
     
     return "";
   }

@@ -38,14 +38,16 @@ class FunctionReference {
   FunctionReference(JSONObject jFunction) {
     syntax = phraseLine(jFunction.getString("syntax"), false);
     priority = jFunction.getInt("priority");
-    output = split(jFunction.getString("output"), "-");
-    String[] sInputs = split(jFunction.getString("inputs"), ",");
+    output = splitTokens(jFunction.getString("output"), "-");
+    String[] sInputs = splitTokens(jFunction.getString("inputs"), ",");
     for(String i: sInputs) {
       String[] eInputs = split(i, "-");
       append(inputs, eInputs);
     }
     compilerMessage = split(jFunction.getString("compiler"), ",");
     machineCode = jFunction.getString("mcode");
+    
+    println("Loaded Functions: " + syntax);
   }
 }
 

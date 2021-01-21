@@ -27,5 +27,12 @@
 		"inputs": "R-Int8,R-Int8",
 		"compiler": "",
 		"mcode": ""
+	},{
+		"syntax": "com(%0,%1)",
+		"priority": 1,
+		"output": "R-Int8",
+		"inputs": "R-Int8,R-Int8",
+		"compiler": "",
+		"mcode": ""
 	}
 ]
